@@ -1,0 +1,27 @@
+{
+  "name": "sit725_s226265671",
+  "version": "1.0.0",
+  "description": "SIT 725 T2 week 2 prac",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sanika-MIT/SIT725_s226265671.git"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "sit725"
+  ],
+  "author": "Sanika Thelakkadan Chathoth",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Sanika-MIT/SIT725_s226265671/issues"
+  },
+  "homepage": "https://github.com/Sanika-MIT/SIT725_s226265671#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
