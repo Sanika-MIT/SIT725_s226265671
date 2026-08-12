@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Books Catalogue</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        #booksList {
+            margin-top: 25px;
+            width: 500px;
+        }
+
+        .book-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+        }
+
+        .book-item:hover {
+            background-color: #eeeeee;
+        }
+
+        #bookDetails {
+            margin-top: 30px;
+            width: 500px;
+        }
+
+        #bookDetails p {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Books Catalogue developed by s226265671</h1>
+
+    <div id="booksList"></div>
+
+    <div id="bookDetails"></div>
+
+    <script>
+
+        const booksList = document.getElementById('booksList');
+        const bookDetails = document.getElementById('bookDetails');
+
+
+        // Fetch all books when the page loads
+        async function getAllBooks() {
+
+            try {
+
+                const response = await fetch('/api/books');
+                const result = await response.json();
+
+                booksList.innerHTML = '';
+                bookDetails.innerHTML = '';
+
+                result.data.forEach(book => {
+
+                    const bookItem = document.createElement('div');
+
+                    bookItem.classList.add('book-item');
+
+                    // Display title and author
+                    bookItem.textContent =
+                        `${book.title} — ${book.author}`;
+
+                    // Click a book to view its details
+                    bookItem.addEventListener('click', () => {
+                        getBookById(book.id);
+                    });
+
+                    booksList.appendChild(bookItem);
+                });
+
+            } catch (error) {
+
+                console.error('Error fetching books:', error);
+
+                booksList.innerHTML =
+                    '<p>Error loading books.</p>';
+            }
+        }
+
+
+        // Fetch one book by ID
+        async function getBookById(id) {
+
+            try {
+
+                const response = await fetch(`/api/books/${id}`);
+                const result = await response.json();
+
+                const book = result.data;
+
+                bookDetails.innerHTML = `
+                    <p><strong>Title:</strong> ${book.title}</p>
+                    <p><strong>Author:</strong> ${book.author}</p>
+                    <p><strong>Year:</strong> ${book.year}</p>
+                    <p><strong>Genre:</strong> ${book.genre}</p>
+                    <p><strong>Summary:</strong> ${book.summary}</p>
+                    <p><strong>Price (AUD):</strong> ${book.price.$numberDecimal}</p>
+                `;
+
+            } catch (error) {
+
+                console.error('Error fetching book:', error);
+
+                bookDetails.innerHTML =
+                    '<p>Error loading book details.</p>';
+            }
+        }
+
+
+        // Start loading books automatically when the page opens
+        getAllBooks();
+
+    </script>
+
+</body>
+
+</html>
