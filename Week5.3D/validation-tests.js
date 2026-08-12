@@ -403,6 +403,320 @@ async function run() {
     body: makeValidUpdate(),
     tags: ["UPDATE_FAIL"]
   });
+
+  // ---- T19 Required ID CREATE ----
+await test({
+    id: "T19",
+    name: "Required ID on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: (() => {
+        const book = makeValidBook(`b${Date.now()}19`);
+        delete book.id;
+        return book;
+    })(),
+    tags: ["CREATE_FAIL", "REQUIRED"]
+});
+
+// ---- T20 Invalid ID format CREATE ----
+await test({
+    id: "T20",
+    name: "Invalid ID format on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}20`),
+        id: "invalid123"
+    },
+    tags: ["CREATE_FAIL", "BOUNDARY"]
+});
+
+// ---- T21 ID too long CREATE ----
+await test({
+    id: "T21",
+    name: "ID too long on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}21`),
+        id: "b" + "1".repeat(20)
+    },
+    tags: ["CREATE_FAIL", "LENGTH"]
+});
+
+// ---- T22 Title too short CREATE ----
+await test({
+    id: "T22",
+    name: "Title too short on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}22`),
+        title: ""
+    },
+    tags: ["CREATE_FAIL", "LENGTH"]
+});
+
+// ---- T23 Invalid author type CREATE ----
+await test({
+    id: "T23",
+    name: "Invalid author type on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}23`),
+        author: 123
+    },
+    tags: ["CREATE_FAIL", "TYPE"]
+});
+
+// ---- T24 Author too short CREATE ----
+await test({
+    id: "T24",
+    name: "Author too short on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}24`),
+        author: "A"
+    },
+    tags: ["CREATE_FAIL", "LENGTH"]
+});
+
+// ---- T25 Author too long CREATE ----
+await test({
+    id: "T25",
+    name: "Author too long on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}25`),
+        author: "A".repeat(101)
+    },
+    tags: ["CREATE_FAIL", "LENGTH"]
+});
+
+// ---- T26 Year not integer CREATE ----
+await test({
+    id: "T26",
+    name: "Non-integer year on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}26`),
+        year: 2020.5
+    },
+    tags: ["CREATE_FAIL", "TYPE"]
+});
+
+// ---- T27 Invalid genre type CREATE ----
+await test({
+    id: "T27",
+    name: "Invalid genre type on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}27`),
+        genre: 123
+    },
+    tags: ["CREATE_FAIL", "TYPE"]
+});
+
+// ---- T28 Genre too short CREATE ----
+await test({
+    id: "T28",
+    name: "Genre too short on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}28`),
+        genre: "A"
+    },
+    tags: ["CREATE_FAIL", "LENGTH"]
+});
+
+// ---- T29 Genre too long CREATE ----
+await test({
+    id: "T29",
+    name: "Genre too long on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}29`),
+        genre: "A".repeat(51)
+    },
+    tags: ["CREATE_FAIL", "LENGTH"]
+});
+
+// ---- T30 Summary too short CREATE ----
+await test({
+    id: "T30",
+    name: "Summary too short on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}30`),
+        summary: "Too short"
+    },
+    tags: ["CREATE_FAIL", "LENGTH"]
+});
+
+// ---- T31 Invalid summary type CREATE ----
+await test({
+    id: "T31",
+    name: "Invalid summary type on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}31`),
+        summary: 12345
+    },
+    tags: ["CREATE_FAIL", "TYPE"]
+});
+
+// ---- T32 Invalid price type CREATE ----
+await test({
+    id: "T32",
+    name: "Invalid price type on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}32`),
+        price: 19.99
+    },
+    tags: ["CREATE_FAIL", "TYPE"]
+});
+
+// ---- T33 Price precision CREATE ----
+await test({
+    id: "T33",
+    name: "Price with too many decimal places on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}33`),
+        price: "19.999"
+    },
+    tags: ["CREATE_FAIL", "BOUNDARY"]
+});
+
+// ---- T34 Price above maximum CREATE ----
+await test({
+    id: "T34",
+    name: "Price above maximum on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: {
+        ...makeValidBook(`b${Date.now()}34`),
+        price: "10000.01"
+    },
+    tags: ["CREATE_FAIL", "BOUNDARY"]
+});
+
+// ---- T35 Required price CREATE ----
+await test({
+    id: "T35",
+    name: "Required price on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: (() => {
+        const book = makeValidBook(`b${Date.now()}35`);
+        delete book.price;
+        return book;
+    })(),
+    tags: ["CREATE_FAIL", "REQUIRED"]
+});
+
+// ---- T36 Required year CREATE ----
+await test({
+    id: "T36",
+    name: "Required year on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: (() => {
+        const book = makeValidBook(`b${Date.now()}36`);
+        delete book.year;
+        return book;
+    })(),
+    tags: ["CREATE_FAIL", "REQUIRED"]
+});
+
+// ---- T37 Required genre CREATE ----
+await test({
+    id: "T37",
+    name: "Required genre on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: (() => {
+        const book = makeValidBook(`b${Date.now()}37`);
+        delete book.genre;
+        return book;
+    })(),
+    tags: ["CREATE_FAIL", "REQUIRED"]
+});
+
+// ---- T38 Required summary CREATE ----
+await test({
+    id: "T38",
+    name: "Required summary on CREATE",
+    method: "POST",
+    path: createPath,
+    expected: 400,
+    body: (() => {
+        const book = makeValidBook(`b${Date.now()}38`);
+        delete book.summary;
+        return book;
+    })(),
+    tags: ["CREATE_FAIL", "REQUIRED"]
+});
+
+// ---- T39 Invalid author type UPDATE ----
+await test({
+    id: "T39",
+    name: "Invalid author type on UPDATE",
+    method: "PUT",
+    path: updatePath(uniqueId),
+    expected: 400,
+    body: {
+        ...makeValidUpdate(),
+        author: 123
+    },
+    tags: ["UPDATE_FAIL", "TYPE"]
+});
+
+// ---- T40 Non-integer year UPDATE ----
+await test({
+    id: "T40",
+    name: "Non-integer year on UPDATE",
+    method: "PUT",
+    path: updatePath(uniqueId),
+    expected: 400,
+    body: {
+        ...makeValidUpdate(),
+        year: 2021.5
+    },
+    tags: ["UPDATE_FAIL", "TYPE"]
+});
+
   const pass = logSummary();
   logCoverage();
 
